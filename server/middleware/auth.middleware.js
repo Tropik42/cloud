@@ -11,11 +11,11 @@ module.exports = (req, res, next) => {
         if (!token) {
             return res.status(401).json({message: 'Ошибка авторизации'})
         }
-        const decoded = jwt.verify(token, config.get('secretKey'))
+        const decoded = jwt.verify(token, config.get('secret'))
         req.user = decoded
-        console.log(decoded);
+        console.log('Из миддлвейр');
         next()
     } catch (e) {
-        return res.status(401).json({message: 'Ошибка авторизации'})
+        return res.status(401).json({message: 'Ошибка авторизации2'})
     }
 }

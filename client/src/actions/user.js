@@ -23,7 +23,7 @@ export const login = (email, password) => {
             })
             dispatch(setUser(response.data.user))
             localStorage.setItem('token', response.data.token)
-            console.log(response.data);
+            console.log('Записал в локал сторедж ебучий токен', response.data.token);
         } catch (e) {
             alert(e.response.data.message)
         }
@@ -36,10 +36,11 @@ export const auth = () => {
             const response = await axios.get(`http://localhost:7000/auth/auth`,
                 {headers:{Authorization:`Bearer ${localStorage.getItem('token')}`}}
             )
+            console.log('После запроса ауф присылает ', response);
             dispatch(setUser(response.data.user))
             localStorage.setItem('token', response.data.token)
         } catch (e) {
-            alert(e.response.data.message)
+            // alert(e.response.data.message)
             localStorage.removeItem('token')
         }
     }
