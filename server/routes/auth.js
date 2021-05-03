@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/authController')
 const {check} = require('express-validator')
-// const authMiddleware = require('../middleware/authMiddleware')
+const authMiddleware = require('../middleware/auth.middleware')
 // const roleMiddleware = require('../middleware/roleMiddleware')
 
 router.post('/registration', [
@@ -11,6 +11,7 @@ router.post('/registration', [
 ],
 controller.registration)
 router.post('/login', controller.login)
+router.get('/auth', authMiddleware, controller.auth)
 // router.get('/users', roleMiddleware('USER'), controller.getUsers)
 
 module.exports = router
