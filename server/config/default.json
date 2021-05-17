@@ -1,4 +1,7 @@
 {
     "serverPort": 7000,
-    "secret": "sdfh4243HJh*jkasdfj^789hj"
+    "secret": "sdfh4243HJh*jkasdfj^789hj",
+    "filePath": "‪C:/Users/aviav/Desktop/cloud/server/files",
+    "filePath2": "‪C:\\Users\\aviav\\Desktop\\cloud\\server\\files"
 }
+

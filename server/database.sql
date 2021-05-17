@@ -18,6 +18,22 @@ INSERT INTO users (name, password, role)
 VALUES 
 ('user1', '12345', 'USER');
 
+--Удалил атрибут у столбца name
 ALTER TABLE users
 ALTER COLUMN name
-DROP UNIQUE;
+DROP NOT NULL;
+
+-- таблица файлов
+
+CREATE TABLE files(
+    file_id BIGSERIAL PRIMARY KEY NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    type VARCHAR(30) NOT NULL,
+    accessLink VARCHAR(255),
+    size INTEGER DEFAULT 0,
+    path VARCHAR(255) DEFAULT "",
+    user_id INTEGER REFERENCES users (user_id)
+);
+
+INSERT INTO files (name, type, user_id)
+VALUES ('test3', 'type3', 1);

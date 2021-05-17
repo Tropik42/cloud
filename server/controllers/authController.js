@@ -3,6 +3,7 @@ var bcrypt = require('bcryptjs')
 const {validationResult} = require('express-validator') 
 const jwt = require('jsonwebtoken')
 const config = require('config')
+const fileService = require('../services/fileService')
 
 const secret = config.get("secret")
 const generateAccessToken = (id) => {
@@ -13,7 +14,7 @@ const generateAccessToken = (id) => {
 } 
 
 class authController {
-    async registration(req, res) {
+    async registration(req, res) { 
         try {
             const errors = validationResult(req) //Функция принимает запрос, выцепляет из него нужные строки и возвращает массив с ошибками
             if (!errors.isEmpty()) {
@@ -25,8 +26,12 @@ class authController {
                 return res.status(400).json({message: 'Пользователь с таким email уже существует'})
             } 
             const hashPassword = bcrypt.hashSync(password, 5)
-            const user = await pool.query("INSERT INTO users (email, name, password) VALUES ($1, $2, $3)", [email, name, hashPassword])
-            res.json({message: `Пользователь с email ${email} создан`})
+            const user = await pool.query("INSERT INTO users (email, name, password) VALUES ($1, $2, $3) RETURNING *", [email, name, hashPassword])
+            const user_id = user.rows[0].user_id
+            const file = await pool.query("INSERT INTO files (name, type, user_id) VALUES($1, $2, $3) RETURNING *", [user_id, 'dir', user_id])
+            const fileInfo = file.rows[0]
+            await fileService.createDir(fileInfo)
+            res.json({fileInfo, message: `Пользователь с email ${email} создан`})
         } catch (e) {
             console.log(e);
             res.status(400).json({message: 'Registration error'})
