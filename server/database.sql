@@ -31,12 +31,14 @@ CREATE TABLE files(
     type VARCHAR(30) NOT NULL,
     accessLink VARCHAR(255),
     size INTEGER DEFAULT 0,
-    path VARCHAR(255) DEFAULT "",
     date DATE DEFAULT now(),
     user_id INTEGER REFERENCES users (user_id)
 );
+    path VARCHAR(255) DEFAULT "",
 
-ALTER TABLE ADD date DATE DEFAULT now();
+ALTER TABLE files ADD date DATE DEFAULT now();
+ALTER TABLE files ADD path VARCHAR(255) DEFAULT '';
+ALTER TABLE files ADD parent INTEGER;
 
 INSERT INTO files (name, type, user_id)
 VALUES ('test3', 'type3', 1);

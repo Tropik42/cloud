@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createDir, getFiles } from '../../actions/file';
+import { setPopupDisplay } from '../../reducers/fileReducer';
 import './Disk.css'
 import FileList from "./FileList/FileList"
+import Popup from './Popup';
 
 const Disk = () => {
     const dispatch = useDispatch()
@@ -12,8 +14,9 @@ const Disk = () => {
         dispatch(getFiles(currentDir))
     }, [currentDir])
 
-    function createDirHandler() {
-        dispatch(createDir(currentDir, 'uhweqe6'))
+    function showPopupHandler() {
+        // dispatch(createDir(currentDir, 'uhweqe6'))
+        dispatch(setPopupDisplay('flex'))
     }
     return (
         <div className="disk">
@@ -21,10 +24,11 @@ const Disk = () => {
                 <button className="disk__back">Назад</button> 
                 <button 
                     className="disk__create"
-                    onClick={() => createDirHandler()}
+                    onClick={() => showPopupHandler()}
                 >Создать папку</button>
             </div>
             <FileList/>
+            <Popup/>
         </div>
     );
 };
