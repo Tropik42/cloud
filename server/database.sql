@@ -32,8 +32,11 @@ CREATE TABLE files(
     accessLink VARCHAR(255),
     size INTEGER DEFAULT 0,
     path VARCHAR(255) DEFAULT "",
+    date DATE DEFAULT now(),
     user_id INTEGER REFERENCES users (user_id)
 );
+
+ALTER TABLE ADD date DATE DEFAULT now();
 
 INSERT INTO files (name, type, user_id)
 VALUES ('test3', 'type3', 1);

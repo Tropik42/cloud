@@ -6,5 +6,6 @@ const fileController = require('../controllers/fileController')
 // const roleMiddleware = require('../middleware/roleMiddleware')
 
 router.post('', authMiddleware, fileController.createDir)
+router.get('', authMiddleware, fileController.fetchFiles)
 
 module.exports = router

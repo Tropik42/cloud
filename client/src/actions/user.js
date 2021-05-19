@@ -36,7 +36,7 @@ export const auth = () => {
             const response = await axios.get(`http://localhost:7000/auth/auth`,
                 {headers:{Authorization:`Bearer ${localStorage.getItem('token')}`}}
             )
-            console.log('После запроса ауф присылает ', response);
+            // console.log('После запроса ауф присылает ', response);
             dispatch(setUser(response.data.user))
             localStorage.setItem('token', response.data.token)
         } catch (e) {
