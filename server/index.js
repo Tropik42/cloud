@@ -1,11 +1,13 @@
 const express = require('express')
 const config = require('config')
+const fileUpload = require('express-fileupload')
 const routes = require('./routes')
 const cors = require('cors')
 
 const app = express()
 const PORT = config.get("serverPort")
 
+app.use(fileUpload({}))
 app.use(cors())
 app.use(express.json()) 
 

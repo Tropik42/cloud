@@ -4,7 +4,7 @@ const path = require('path')
 
 
 class FileService {
-
+ 
     createDir(file) {
         const filePath = path.join(path.resolve('files'), file.user_id.toString(), file.path.toString())
         return new Promise(((resolve, reject) => {
