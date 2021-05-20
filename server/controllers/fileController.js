@@ -13,11 +13,15 @@ class FileController {
                 const queryParentFile = await pool.query("SELECT * FROM files WHERE file_id = $1", [parent])
                 parentFile = queryParentFile.rows[0]
                 // console.log(parentFile)
+            } else {
+                const queryParentFile = await pool.query("SELECT file_id FROM files WHERE name = $1 AND user_id = $2 AND path = $3", [req.user.id, req.user.id, ''])
+                parentFile = queryParentFile.rows[0].file_id
+                console.log(parentFile);
             }
             let file
             if (!parent) {
                 file = await pool.query
-                ("INSERT INTO files (name, type, path, parent, user_id) VALUES($1, $2, $3, $4, $5) RETURNING *", [name, type, name, req.user.id, req.user.id])
+                ("INSERT INTO files (name, type, path, parent, user_id) VALUES($1, $2, $3, $4, $5) RETURNING *", [name, type, name, parentFile, req.user.id])
             } else {
                 file = await pool.query
                 ("INSERT INTO files (name, type, path, parent, user_id) VALUES($1, $2, $3, $4, $5) RETURNING *", [name, type, `${parentFile.path}\\${name}`, parent, req.user.id])
@@ -46,12 +50,17 @@ class FileController {
             const {file_id, name, parent} = req.query
             let files
             if (!parent) {
-                files = await pool.query("SELECT * FROM files WHERE parent = $1", [req.user.id])
+                let fileId
+                fileId = await pool.query("SELECT file_id FROM files WHERE name = $1 AND user_id = $2 AND path = $3", [req.user.id, req.user.id, ''])
+                console.log(fileId.rows[0].file_id);
+                // files = await pool.query("SELECT FROM files WHERE file_id = (SELECT file_id FROM files WHERE name = $1 AND user_id = $2 AND path = $3)", [req.user.id.toString(), req.user.id, ''])
+                files = await pool.query("SELECT * FROM files WHERE parent = $1", [fileId.rows[0].file_id])
             } else {
                 files = await pool.query("SELECT * FROM files WHERE parent = $1", [parent])
             }
             files = files.rows
-            return res.json(files)
+            console.log(files);
+            return res.json(files) 
         } catch (e) {
             console.log(e)
             return res.status(500).json({message: "Can not get files"})

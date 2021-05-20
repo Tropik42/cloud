@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { createDir, getFiles } from '../../actions/file';
+import { getFiles } from '../../actions/file';
 import { setCurrentDir, setPopupDisplay } from '../../reducers/fileReducer';
 import './Disk.css'
 import FileList from "./FileList/FileList"
