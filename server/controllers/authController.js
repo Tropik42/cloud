@@ -86,7 +86,7 @@ class authController {
                     avatar: result.avatar
                 }
             })     
-            console.log(result);
+            // console.log(result);
         } catch (e) {
             console.log(e);
             res.status(400).json({message: 'Login error'})

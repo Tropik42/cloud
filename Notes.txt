@@ -1,0 +1,17 @@
+Дошел до этого урока и хотел бы для будущих зрителей сделать пару примечаний:
+
+1. blob из axios получить довольно легко, нужно просто добавить responseType: blob
+
+const fileBlob = instanceAxios.get(`/files/download/?id=${fileId}`, {
+      responseType: 'blob'
+    })
+      .then(data => data.data)
+
+2. А еще я заметил, что мы постоянно прикрепляем авторизацию к каждому запросу, а также прописываем полный url. Это можно исправить с помощью создания инстанса axios через использования axios.create:
+
+export const instanceAxios = axios.create({
+  baseURL: 'http://localhost:5000/api/',
+  headers: {Authorization: `Bearer ${localStorage.getItem('authToken')}`}
+})
+
+И потом использовать именно instanceAxios в запросах (это тот же аксиос, просто с вашими параметрами), стараюсь убирать дублирующийся код. 

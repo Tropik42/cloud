@@ -51,7 +51,7 @@ class FileController {
             if (!parent) {
                 let fileId
                 fileId = await pool.query("SELECT file_id FROM files WHERE name = $1 AND user_id = $2 AND path = $3", [req.user.id, req.user.id, ''])
-                console.log('если нет parent, fileId = ', fileId.rows[0].file_id);
+                // console.log('если нет parent, fileId = ', fileId.rows[0].file_id);
                 files = await pool.query("SELECT * FROM files WHERE parent = $1", [fileId.rows[0].file_id])
             } else {
                 files = await pool.query("SELECT * FROM files WHERE parent = $1", [parent])
@@ -107,13 +107,48 @@ class FileController {
             const type = file.name.split('.').pop()
             const dbFile = await pool.query(
                 "INSERT INTO files (name, type, size, path, parent, user_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *", 
-                [file.name, type, file.size, parentFile.path, parentFile.file_id, req.user.id])
+                [file.name, type, file.size, `${parentFile.path}\\${file.name}`, parentFile.file_id, req.user.id])
             
-            res.json(dbFile)
+            res.json(dbFile.rows[0])
+            console.log('После загрузки файла и добавления в БД присылает это', dbFile.rows[0]);
 
         } catch (e) {
             console.log(e)
             return res.status(500).json({message: "Upload error"})
+        }
+    }
+
+    async downloadFile(req, res) {
+        try {
+            const {id} = req.query
+            const fileQuery = await pool.query("SELECT * FROM files WHERE file_id = $1", [id])
+            const file = fileQuery.rows[0]
+            console.log(file);
+            const filePath = path.join(path.resolve('files'), req.user.id.toString(), file.path, file.name)
+            if (fs.existsSync(filePath)) {
+                return res.download(filePath, file.name)
+            }
+            return res.status(400).json({message: "download error"})
+        } catch (e) {
+            console.log(e)
+            res.status(500),json({message: "Download error"})
+        }
+    }
+
+    async deleteFile(req, res) {
+        try {
+            const fileQuery = await pool.query("SELECT * FROM files WHERE file_id = $1", [req.query.id])
+            const file = fileQuery.rows[0]
+            console.log('После запроса на удаление БД присылает это: ', file);
+            if (!file) {
+                return res.status(400).json({message: 'File not found'})
+            }
+            fileService.deleteFile(file)
+            await pool.query("DELETE FROM files WHERE file_id = $1", [req.query.id])
+            return res.json({message: 'File was delete'})
+        } catch (e) {
+            console.log(e);
+            return res.status(400).json({message: 'Dir is not empty'})
         }
     }
 }
