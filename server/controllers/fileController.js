@@ -46,16 +46,51 @@ class FileController {
 
     async fetchFiles(req, res) {
         try {
-            const {file_id, name, parent} = req.query
-            let files
-            if (!parent) {
-                let fileId
-                fileId = await pool.query("SELECT file_id FROM files WHERE name = $1 AND user_id = $2 AND path = $3", [req.user.id, req.user.id, ''])
-                // console.log('если нет parent, fileId = ', fileId.rows[0].file_id);
-                files = await pool.query("SELECT * FROM files WHERE parent = $1", [fileId.rows[0].file_id])
-            } else {
-                files = await pool.query("SELECT * FROM files WHERE parent = $1", [parent])
+            const {sort, parent} = req.query
+
+            let files 
+            switch (sort) {
+                case 'name':
+                    if (!parent) {
+                        let fileId
+                        fileId = await pool.query("SELECT file_id FROM files WHERE name = $1 AND user_id = $2 AND path = $3", [req.user.id, req.user.id, ''])
+                        // console.log('если нет parent, fileId = ', fileId.rows[0].file_id);
+                        files = await pool.query("SELECT * FROM files WHERE parent = $1 ORDER BY name", [fileId.rows[0].file_id])
+                    } else {
+                        files = await pool.query("SELECT * FROM files WHERE parent = $1 ORDER BY name", [parent])
+                    }
+                    break
+                case 'type':
+                    if (!parent) {
+                        let fileId
+                        fileId = await pool.query("SELECT file_id FROM files WHERE name = $1 AND user_id = $2 AND path = $3", [req.user.id, req.user.id, ''])
+                        // console.log('если нет parent, fileId = ', fileId.rows[0].file_id);
+                        files = await pool.query("SELECT * FROM files WHERE parent = $1 ORDER BY type", [fileId.rows[0].file_id])
+                    } else {
+                        files = await pool.query("SELECT * FROM files WHERE parent = $1 ORDER BY type", [parent])
+                    }
+                    break
+                case 'date':
+                    if (!parent) {
+                        let fileId
+                        fileId = await pool.query("SELECT file_id FROM files WHERE name = $1 AND user_id = $2 AND path = $3", [req.user.id, req.user.id, ''])
+                        // console.log('если нет parent, fileId = ', fileId.rows[0].file_id);
+                        files = await pool.query("SELECT * FROM files WHERE parent = $1 ORDER BY date", [fileId.rows[0].file_id])
+                    } else {
+                        files = await pool.query("SELECT * FROM files WHERE parent = $1 ORDER BY date", [parent])
+                    }
+                    break
+                default:
+                    if (!parent) {
+                        let fileId
+                        fileId = await pool.query("SELECT file_id FROM files WHERE name = $1 AND user_id = $2 AND path = $3", [req.user.id, req.user.id, ''])
+                        // console.log('если нет parent, fileId = ', fileId.rows[0].file_id);
+                        files = await pool.query("SELECT * FROM files WHERE parent = $1", [fileId.rows[0].file_id])
+                    } else {
+                        files = await pool.query("SELECT * FROM files WHERE parent = $1", [parent])
+                    }
             }
+            
             files = files.rows
             // console.log('fetchFiles возвращает', files);
             return res.json(files) 
@@ -86,7 +121,7 @@ class FileController {
             }
             const queryUser = await pool.query('SELECT * FROM users WHERE user_id = $1', [req.user.id])
             const user = queryUser.rows[0]
-            console.log('Юзера БД прислала такого: ', user);
+            // console.log('Юзера БД прислала такого: ', user);
             if (user.usedspace + file.size > user.diskspace) {
                 return res.status(400).json({message: 'There is no space on the disk'})
             }
@@ -110,7 +145,7 @@ class FileController {
                 [file.name, type, file.size, `${parentFile.path}\\${file.name}`, parentFile.file_id, req.user.id])
             
             res.json(dbFile.rows[0])
-            console.log('После загрузки файла и добавления в БД присылает это', dbFile.rows[0]);
+            // console.log('После загрузки файла и добавления в БД присылает это', dbFile.rows[0]);
 
         } catch (e) {
             console.log(e)
@@ -123,8 +158,9 @@ class FileController {
             const {id} = req.query
             const fileQuery = await pool.query("SELECT * FROM files WHERE file_id = $1", [id])
             const file = fileQuery.rows[0]
-            console.log(file);
-            const filePath = path.join(path.resolve('files'), req.user.id.toString(), file.path, file.name)
+            // console.log('Файл из БД:', file);
+            const filePath = path.join(path.resolve('files'), req.user.id.toString(), file.path)
+            console.log('Найденный путь к файлу: ', filePath);
             if (fs.existsSync(filePath)) {
                 return res.download(filePath, file.name)
             }
@@ -139,7 +175,7 @@ class FileController {
         try {
             const fileQuery = await pool.query("SELECT * FROM files WHERE file_id = $1", [req.query.id])
             const file = fileQuery.rows[0]
-            console.log('После запроса на удаление БД присылает это: ', file);
+            // console.log('После запроса на удаление БД присылает это: ', file);
             if (!file) {
                 return res.status(400).json({message: 'File not found'})
             }

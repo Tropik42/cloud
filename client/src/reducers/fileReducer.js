@@ -20,7 +20,7 @@ export default function fileReducer(state = defaultState, action) {
         case ADD_FILE: return {...state, files: [...state.files, action.payload]}
         case SET_POPUP_DISPLAY: return {...state, popupDisplay: action.payload}
         case PUSH_TO_STACK: return {...state, dirStack: [...state.dirStack, action.payload]}
-        case DELETE_FILE: return {...state, files: [...state.files.filter(file => file.file_id != action.payload)]}
+        case DELETE_FILE: return {...state, files: [...state.files.filter(file => file.file_id !== action.payload)]}
         default: 
             return state
     }
