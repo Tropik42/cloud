@@ -9,7 +9,8 @@ const PORT = config.get("serverPort")
 
 app.use(fileUpload({}))
 app.use(cors())
-app.use(express.json()) 
+app.use(express.json())
+app.use(express.static('static'))
 
 app.use('/auth', routes.auth)
 app.use('/files', routes.files)

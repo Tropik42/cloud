@@ -6,7 +6,7 @@ import { hideUploader } from '../../../reducers/uploadReducer';
 
 const Uploader = () => {
     const files = useSelector(state => state.upload.files)
-    console.log('Массив файлов для загрузки из стейта:', files);
+    // console.log('Массив файлов для загрузки из стейта:', files);
     const isVisible = useSelector(state => state.upload.isVisible)
     const dispatch = useDispatch()
 

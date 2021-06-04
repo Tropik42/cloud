@@ -2,6 +2,7 @@ const fileService = require('../services/fileService')
 const pool = require('../db')
 const path = require('path')
 const fs = require('fs')
+const uuid = require('uuid')
 
 
 class FileController {
@@ -159,7 +160,8 @@ class FileController {
             const fileQuery = await pool.query("SELECT * FROM files WHERE file_id = $1", [id])
             const file = fileQuery.rows[0]
             // console.log('Файл из БД:', file);
-            const filePath = path.join(path.resolve('files'), req.user.id.toString(), file.path)
+            // const filePath = path.join(path.resolve('files'), req.user.id.toString(), file.path)
+            const filePath = fileService.getPath(file)
             console.log('Найденный путь к файлу: ', filePath);
             if (fs.existsSync(filePath)) {
                 return res.download(filePath, file.name)
@@ -185,6 +187,44 @@ class FileController {
         } catch (e) {
             console.log(e);
             return res.status(400).json({message: 'Dir is not empty'})
+        }
+    }
+
+    async searchFile(req, res) {
+        try {
+            const searchName = req.query.search
+            let files =  await pool.query("SELECT * FROM files WHERE user_id = $1", [req.user.id])
+            files = files.rows.filter(file => file.name.includes(searchName))
+            return res.json(files)
+        } catch (e) {
+            console.log(e);
+            return res.status(400).json({message: 'Search error'})
+        }
+    }
+
+    async uploadAvatar(req, res) {
+        try {
+            const file = req.files.file
+            const avatarName = uuid.v4() + '.jpg'
+            file.mv(path.join(path.resolve('static'), avatarName))
+            const newSer = await pool.query("UPDATE users SET avatar = $1 WHERE user_id = $2 RETURNING *", [avatarName, req.user.id])
+            return res.json(newSer.rows[0])
+        } catch (e) {
+            console.log(e);
+            return res.status(400).json({message: 'Upload avatar error'})
+        }
+    }
+
+    async deleteAvatar(req, res) {
+        try {
+            const user = await pool.query("SELECT * FROM users WHERE user_id = $1", [req.user.id])
+            fs.unlinkSync(path.join(path.resolve('static'), user.rows[0].avatar))
+            console.log(user.rows[0].avatar);
+            const newSer = await pool.query("UPDATE users SET avatar = $1 WHERE user_id = $2 RETURNING *", [null, req.user.id])
+            return res.json(newSer.rows[0])
+        } catch (e) {
+            console.log(e);
+            return res.status(400).json({message: 'Delete avatar error'})
         }
     }
 }
