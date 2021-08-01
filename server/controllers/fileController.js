@@ -143,7 +143,7 @@ class FileController {
             const type = file.name.split('.').pop()
             const dbFile = await pool.query(
                 "INSERT INTO files (name, type, size, path, parent, user_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *", 
-                [file.name, type, file.size, `${parentFile.path}\\${file.name}`, parentFile.file_id, req.user.id])
+                [file.name, type, file.size, `${parentFile.path}/${file.name}`, parentFile.file_id, req.user.id])
             
             res.json(dbFile.rows[0])
             // console.log('После загрузки файла и добавления в БД присылает это', dbFile.rows[0]);
