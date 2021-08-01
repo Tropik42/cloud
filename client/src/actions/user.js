@@ -4,7 +4,7 @@ import { setUser } from '../reducers/userReducer'
 
 export const registration = async (email, password) => {
     try {
-        const response = await axios.post(`http://localhost:7000/auth/registration`, {
+        const response = await axios.post(`${API_URL}auth/registration`, {
             email,
             password
         })
@@ -18,7 +18,7 @@ export const registration = async (email, password) => {
 export const login = (email, password) => {
     return async dispatch => {
         try {
-            const response = await axios.post(`http://localhost:7000/auth/login`, {
+            const response = await axios.post(`${API_URL}auth/login`, {
                 email,
                 password
             })
@@ -34,7 +34,7 @@ export const login = (email, password) => {
 export const auth = () => {
     return async dispatch => {
         try {
-            const response = await axios.get(`http://localhost:7000/auth/auth`,
+            const response = await axios.get(`${API_URL}auth/auth`,
                 {headers:{Authorization:`Bearer ${localStorage.getItem('token')}`}}
             )
             // console.log('После запроса ауф присылает ', response);

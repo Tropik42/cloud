@@ -5,7 +5,7 @@ CREATE TABLE users(
     email VARCHAR(127) UNIQUE NOT NULL,
     name VARCHAR(127) UNIQUE,
     password VARCHAR(255) NOT NULL,
-    role VARCHAR(127) DEFAULT 'USER' NOT NULL,
+    role VARCHAR(127) DEFAULT 'USER',
     diskSpace INTEGER DEFAULT 3000,
     usedSpace INTEGER DEFAULT 0,
     avatar VARCHAR(255),
@@ -32,9 +32,10 @@ CREATE TABLE files(
     accessLink VARCHAR(255),
     size INTEGER DEFAULT 0,
     date DATE DEFAULT now(),
-    user_id INTEGER REFERENCES users (user_id)
+    user_id INTEGER REFERENCES users (user_id),
+    path VARCHAR(255) DEFAULT '',
+    parent INTEGER
 );
-    path VARCHAR(255) DEFAULT "",
 
 ALTER TABLE files ADD date DATE DEFAULT now();
 ALTER TABLE files ADD path VARCHAR(255) DEFAULT '';
