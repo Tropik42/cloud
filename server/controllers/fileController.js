@@ -111,18 +111,18 @@ class FileController {
             if (parent) {
                 const queryParentFile = await pool.query("SELECT * FROM files WHERE file_id = $1", [parent])
                 parentFile = queryParentFile.rows[0]
-                console.log('Если есть родитель, он такой: ', parentFile)
+                console.log('Есть родитель, он такой: ', parentFile)
             } else {
                 const queryParentFileId = await pool.query("SELECT file_id FROM files WHERE name = $1 AND user_id = $2 AND path = $3", [req.user.id, req.user.id, ''])
                 // console.log('найденный file_id: ', queryParentFileId);
                 const queryParentFile = await pool.query("SELECT * FROM files WHERE file_id = $1", [queryParentFileId.rows[0].file_id])
                 parentFile = queryParentFile.rows[0]
 
-                console.log('Если родителя нет, присваивается это: ', parentFile);
+                console.log('Родителя нет, присваивается это: ', parentFile);
             }
             const queryUser = await pool.query('SELECT * FROM users WHERE user_id = $1', [req.user.id])
             const user = queryUser.rows[0]
-            // console.log('Юзера БД прислала такого: ', user);
+            console.log('Юзера БД прислала такого: ', user);
             if (user.usedspace + file.size > user.diskspace) {
                 return res.status(400).json({message: 'There is no space on the disk'})
             }
@@ -146,7 +146,7 @@ class FileController {
                 [file.name, type, file.size, `${parentFile.path}/${file.name}`, parentFile.file_id, req.user.id])
             
             res.json(dbFile.rows[0])
-            // console.log('После загрузки файла и добавления в БД присылает это', dbFile.rows[0]);
+            console.log('После загрузки файла и добавления в БД присылает это', dbFile.rows[0]);
 
         } catch (e) {
             console.log(e)
