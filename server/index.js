@@ -7,8 +7,8 @@ const cors = require('cors')
 const app = express()
 const PORT = config.get("serverPort")
 
-app.use(fileUpload({}))
 app.use(cors())
+app.use(fileUpload({}))
 app.use(express.json())
 app.use(express.static('static'))
 
