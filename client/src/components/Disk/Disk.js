@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getFiles, uploadFile } from '../../actions/file';
-import { setCurrentDir, setFileView, setPopupDisplay } from '../../reducers/fileReducer';
+import { setCurrentDir, setFileView, setPopupDisplay, setPopupNoteDisplay } from '../../reducers/fileReducer';
 import './Disk.css'
 import FileList from "./FileList/FileList"
 import Popup from './Popup';
+import PopupNote from './PopupNote';
 import Uploader from './Uploader/Uploader';
 
 const Disk = () => {
@@ -22,6 +23,11 @@ const Disk = () => {
     function showPopupHandler() {
         // dispatch(createDir(currentDir, 'uhweqe6'))
         dispatch(setPopupDisplay('flex'))
+    }
+
+    function showPopupNoteHandler() {
+        // dispatch(createDir(currentDir, 'uhweqe6'))
+        dispatch(setPopupNoteDisplay('flex'))
     }
 
     function backClickHandler() {
@@ -67,6 +73,7 @@ const Disk = () => {
             <div className="disk__btns">
                 <button className="disk__back" onClick={() => backClickHandler()}>Назад</button> 
                 <button className="disk__create" onClick={() => showPopupHandler()}>Создать папку</button>
+                <button className="disk__create" onClick={() => showPopupNoteHandler()}>Создать запись</button>
                 <div className="disk__upload">
                     <label htmlFor="disk__upload-input" className="disk__upload-label">Загрузить файл</label>
                     <input multiple={true} onChange={(event) => fileUploadHandler(event)} type="file" id="disk__upload-input" className="disk__upload-input"></input>
@@ -81,6 +88,7 @@ const Disk = () => {
             </div>
             <FileList/>
             <Popup/>
+            <PopupNote/>
             <Uploader/>
         </div>
 
